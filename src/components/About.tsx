@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { portfolioData } from "@/data/portfolioData";
 import { 
   Code2, 
@@ -158,8 +159,10 @@ export default function About() {
                   <span className="w-3 h-3 rounded-full bg-amber-500/90 inline-block"></span>
                   <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block"></span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-                  <Terminal className="w-3.5 h-3.5 text-sky-400" />
+                <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+                  <div className="relative w-4 h-4 rounded-full overflow-hidden border border-emerald-400/60 shrink-0">
+                    <Image src="/profile.jpg" alt="Hapinayan" fill className="object-cover" />
+                  </div>
                   <span>developer.config.ts</span>
                 </div>
                 <div className="text-[10px] text-slate-500 font-mono">UTF-8</div>

@@ -152,15 +152,18 @@ export default function Hero() {
                 <div className="relative aspect-[4/4.2] w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800/70 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900/90 dark:to-[#080d1a] flex flex-col items-center justify-center p-6 text-center group">
                   
                   {!photoFailed ? (
-                    <div className="relative w-full h-full">
-                      <Image
-                        src="/profile.jpg"
-                        alt="Hapinayan - Web Developer"
-                        fill
-                        priority
-                        className="object-cover rounded-xl"
-                        onError={() => setPhotoFailed(true)}
-                      />
+                    <div className="relative w-full h-full flex items-center justify-center py-2">
+                      {/* Circular frame tailored to the green circle avatar with glow border */}
+                      <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border-2 border-emerald-400/50 dark:border-emerald-400/40 shadow-2xl shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-500">
+                        <Image
+                          src="/profile.jpg"
+                          alt="Hapinayan - Web Developer"
+                          fill
+                          priority
+                          className="object-cover scale-[1.02]"
+                          onError={() => setPhotoFailed(true)}
+                        />
+                      </div>
                     </div>
                   ) : null}
 
