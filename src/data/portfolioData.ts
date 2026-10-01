@@ -100,7 +100,7 @@ export const portfolioData: {
       "I’m a passionate web developer focused on creating modern, responsive and user-friendly websites and web applications.",
     aboutIntro:
       "I’m a web developer passionate about building clean, modern and practical digital experiences. I enjoy turning ideas into responsive websites and web applications with a strong focus on usability, performance and clean development practices.",
-    email: "hapinayan.dev@gmail.com",
+    email: "hapinayan017@gmail.com",
     socials: {
       github: "https://github.com/hapinayan",
       linkedin: "https://linkedin.com/in/hapinayan",

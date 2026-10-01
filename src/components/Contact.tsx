@@ -11,7 +11,8 @@ import {
   Sparkles, 
   ExternalLink,
   Copy,
-  Check
+  Check,
+  Loader2
 } from "lucide-react";
 
 interface FormState {
@@ -50,6 +51,8 @@ export default function Contact() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [directlySent, setDirectlySent] = useState(false);
   const [draftCopied, setDraftCopied] = useState(false);
 
   const validate = (): boolean => {
@@ -86,13 +89,45 @@ export default function Contact() {
     return `mailto:${personal.email}?subject=${subject}&body=${body}`;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Trigger mailto fallback link directly
-    window.location.href = getMailtoLink();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${personal.email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          Name: formData.name,
+          Email: formData.email,
+          "Project Type": formData.projectType,
+          Message: formData.message,
+          _subject: `[Portfolio Inquiry] ${formData.name} - ${formData.projectType}`,
+          _template: "table",
+        }),
+      });
+
+      if (response.ok) {
+        setDirectlySent(true);
+        setSubmitted(true);
+      } else {
+        // Fallback to mailto
+        window.location.href = getMailtoLink();
+        setDirectlySent(false);
+        setSubmitted(true);
+      }
+    } catch {
+      // Fallback to mailto if offline or blocked
+      window.location.href = getMailtoLink();
+      setDirectlySent(false);
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const copyMessageDraft = () => {
@@ -136,10 +171,12 @@ export default function Contact() {
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                  Message Ready!
+                  {directlySent ? "Message Sent to Hapinayan!" : "Message Ready!"}
                 </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                  Your default email client has been prepared with your message. If it didn&apos;t open automatically, click the button below or copy your draft.
+                <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+                  {directlySent
+                    ? `Thank you! Your message has been delivered directly to ${personal.email}. I will review your requirements and reply as soon as possible.`
+                    : "Your default email client has been prepared with your message. If it didn't open automatically, click the button below or copy your draft."}
                 </p>
               </div>
 
@@ -318,10 +355,20 @@ export default function Contact() {
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <button
                   type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm tracking-wide shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 disabled:opacity-75 text-white font-semibold text-sm tracking-wide shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Send Message</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
 
                 <div className="text-center sm:text-right text-xs text-slate-500 dark:text-slate-400 font-mono">
